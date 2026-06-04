@@ -1,0 +1,28 @@
+[build-system]
+requires=["setuptools"]
+build-backend="setuptools.build_meta"
+
+[project]
+name="lazy_backup"
+requires-python=">=3.10"
+dependencies=[]
+readme="README.md"
+authors=[
+    { name = "Dumitru Melniciuc" }
+]
+dynamic=["version"]
+
+[tool.setuptools]
+packages=["lazy_backup"]
+
+[tool.ruff.lint]
+select = ["E", "F", "D"]
+
+[tool.ruff.lint.pydocstyle]
+convention="google"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+ignore_missing_imports = true
