@@ -9,8 +9,11 @@ def main():
     fl_source = r"D:/DAW/FL Studio/Data/Projects"
     fl_backup = r"D:/automatedBackUp/Project/Flp"
 
-    recorded_source = r"D:/DAW/FL Studio/Data/Patches/Recorded"
+    recorded_source = r"D:/DAW/FL Studio/user_data/FL Studio/Audio/Recorded"
     recorded_backup = r"D:/automatedBackUp/Project/Recorded"
+
+    rendered_source = r"D:/DAW/FL Studio/user_data/FL Studio/Audio/Rendered"
+    rendered_backup = r"D:/automatedBackUp/Project/Rendered"
 
     sliced_beats_source = r"D:/DAW/FL Studio/Data/Patches/Sliced beats"
     sliced_beats_backup = r"D:/automatedBackUp/Project/Sliced beats"
@@ -21,6 +24,7 @@ def main():
     datum = [
         [fl_source, fl_backup, fl_file_type],
         [recorded_source, recorded_backup, audio_file_type],
+        [rendered_source, rendered_backup, audio_file_type],
         [sliced_beats_source, sliced_beats_backup, audio_file_type],
         [template_path, template_backup, fl_file_type],
     ]

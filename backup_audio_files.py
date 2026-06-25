@@ -6,7 +6,7 @@ def main():
     audio_file_type = [".wav"]
 
     audio_files_source = r"D:/DAW/FL Studio/Data/Projects"
-    audio_files_backup = "D:/automatedBackUp/wav/wav2"
+    audio_files_backup = "D:/automatedBackUp/wav/wav"
 
     lazy_backup(
         source_folder=Path(audio_files_source),
