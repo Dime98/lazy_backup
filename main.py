@@ -3,7 +3,7 @@ import os
 import shutil
 from pathlib import Path
 
-from color_prints import prGreen, prPurple, prCyan
+from color_prints import prGreen, prPurple, prCyan, prRed
 
 
 # modification date, human-readable
@@ -51,7 +51,11 @@ def lazy_backup(source_folder: Path, backup_folder: Path, target_file_types: lis
         prGreen(f"\t copying {file} ")
         source_file = source_folder / file
         destination_file = backup_folder / file
-        shutil.copy2(source_file, destination_file)
+        try:
+            shutil.copy2(source_file, destination_file)
+        except Exception as e:
+            prRed(f"Could not copy '{source_file}'.\n{e}")
+            return
 
     print(f"\n -- Deleting {len(files_to_delete)} file(s)")
     for file in files_to_delete:
