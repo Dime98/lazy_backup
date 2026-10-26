@@ -34,7 +34,7 @@ def main():
             source_folder=Path(source_folder),
             backup_folder=Path(backup_folder),
             target_file_types=target_file_types,
-            use_symlink=False,
+            link_mode="hardlink",
         )
 
     open_folder_timer(folder_to_open=Path(fl_backup), time_to_elapse=5)

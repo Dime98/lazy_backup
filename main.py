@@ -30,23 +30,33 @@ def get_file_names_by_type(folder: Path, file_type: list | str) -> dict:
     return file_candidates
 
 
-def copy_file(source_file, destination_file, symlink):
-    try:
-        if symlink:
-            destination_file.symlink_to(source_file)
-        else:
+def copy_file(source_file, destination_file, link_mode: str | None = "hardlink"):
+    if link_mode is not None:
+        try:
+            if link_mode == "hardlink":
+                destination_file.hardlink_to(source_file)
+            elif link_mode == "symlink":
+                destination_file.symlink_to(source_file)
+            return
+        except Exception as e:
+            prYellow(f"Could not copy '{source_file}'.\n{e}\nFallback to shutil.copy2")
             shutil.copy2(source_file, destination_file)
+
+    try:
+        shutil.copy2(source_file, destination_file)
     except Exception as e:
         prRed(f"Could not copy '{source_file}'.\n{e}")
-        return
 
 
 def lazy_backup(
     source_folder: Path,
     backup_folder: Path,
     target_file_types: list[str],
-    use_symlink: bool,
+    link_mode: str | None = None,
 ):
+    if link_mode not in [None, "hardlink", "symlink"]:
+        raise ValueError(f"Unknown link mode: '{link_mode}'")
+
     if not source_folder.exists():
         raise FileNotFoundError(f"'{source_folder}' does not exist.")
 
@@ -72,7 +82,7 @@ def lazy_backup(
         copy_file(
             source_file=source_file,
             destination_file=destination_file,
-            symlink=use_symlink,
+            link_mode=link_mode,
         )
 
     print(f"\n -- Deleting {len(files_to_delete)} file(s)")
@@ -85,8 +95,8 @@ def lazy_backup(
         get_file_names_by_type(backup_folder, target_file_types)
     ), "Number of files differ in source and backup folders."
 
-    # no need to recopy files with different modification date for symlinks
-    if use_symlink:
+    # no need to recopy files with different modification date for symlinks/hardlink
+    if link_mode:
         return
 
     print("\n -- Copying file(s) with different modification date")
@@ -102,7 +112,7 @@ def lazy_backup(
         copy_file(
             source_file=source_file,
             destination_file=destination_file,
-            symlink=use_symlink,
+            link_mode=link_mode,
         )
 
     print("\n" + "=" * 80)
