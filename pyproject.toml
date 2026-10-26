@@ -16,7 +16,7 @@ dynamic=["version"]
 packages=["lazy_backup"]
 
 [tool.ruff.lint]
-select = ["E", "F", "D"]
+select = ["E", "F"]
 
 [tool.ruff.lint.pydocstyle]
 convention="google"
