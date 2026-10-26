@@ -3,7 +3,7 @@ import os
 import shutil
 from pathlib import Path
 
-from color_prints import prGreen, prPurple, prCyan, prRed
+from color_prints import *
 
 
 # modification date, human-readable
