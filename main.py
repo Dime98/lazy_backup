@@ -13,6 +13,8 @@ def _get_modification_date(file):
 
 
 def get_modification_date(file: Path):
+    if file.is_symlink():
+        return None
     return file.stat().st_mtime
 
 
@@ -28,7 +30,23 @@ def get_file_names_by_type(folder: Path, file_type: list | str) -> dict:
     return file_candidates
 
 
-def lazy_backup(source_folder: Path, backup_folder: Path, target_file_types: list[str]):
+def copy_file(source_file, destination_file, symlink):
+    try:
+        if symlink:
+            destination_file.symlink_to(source_file)
+        else:
+            shutil.copy2(source_file, destination_file)
+    except Exception as e:
+        prRed(f"Could not copy '{source_file}'.\n{e}")
+        return
+
+
+def lazy_backup(
+    source_folder: Path,
+    backup_folder: Path,
+    target_file_types: list[str],
+    use_symlink: bool,
+):
     if not source_folder.exists():
         raise FileNotFoundError(f"'{source_folder}' does not exist.")
 
@@ -51,11 +69,11 @@ def lazy_backup(source_folder: Path, backup_folder: Path, target_file_types: lis
         prGreen(f"\t copying {file} ")
         source_file = source_folder / file
         destination_file = backup_folder / file
-        try:
-            shutil.copy2(source_file, destination_file)
-        except Exception as e:
-            prRed(f"Could not copy '{source_file}'.\n{e}")
-            return
+        copy_file(
+            source_file=source_file,
+            destination_file=destination_file,
+            symlink=use_symlink,
+        )
 
     print(f"\n -- Deleting {len(files_to_delete)} file(s)")
     for file in files_to_delete:
@@ -67,6 +85,10 @@ def lazy_backup(source_folder: Path, backup_folder: Path, target_file_types: lis
         get_file_names_by_type(backup_folder, target_file_types)
     ), "Number of files differ in source and backup folders."
 
+    # no need to recopy files with different modification date for symlinks
+    if use_symlink:
+        return
+
     print("\n -- Copying file(s) with different modification date")
     for file in source_files:
         source_file_date = source_files[file].get("modification_date")
@@ -77,7 +99,11 @@ def lazy_backup(source_folder: Path, backup_folder: Path, target_file_types: lis
         prCyan(f"\t Modification date mismatch for {file} ")
         source_file = source_folder / file
         destination_file = backup_folder / file
-        shutil.copy2(source_file, destination_file)
+        copy_file(
+            source_file=source_file,
+            destination_file=destination_file,
+            symlink=use_symlink,
+        )
 
     print("\n" + "=" * 80)
 

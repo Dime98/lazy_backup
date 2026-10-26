@@ -12,6 +12,7 @@ def main():
         source_folder=Path(audio_files_source),
         backup_folder=Path(audio_files_backup),
         target_file_types=audio_file_type,
+        use_symlink=True,
     )
 
     open_folder_timer(folder_to_open=Path(audio_files_backup), time_to_elapse=5)
