@@ -61,8 +61,8 @@ def lazy_backup(
     print(f"{backup_folder=}, found {len(backup_files)} file(s).")
     print(f"{target_file_types=}")
 
-    files_to_copy = list(set(source_files) - set(backup_files))
-    files_to_delete = list(set(backup_files) - set(source_files))
+    files_to_copy = set(source_files) - set(backup_files)
+    files_to_delete = set(backup_files) - set(source_files)
 
     print(f"\n -- Copying {len(files_to_copy)} file(s)")
     for file in files_to_copy:
